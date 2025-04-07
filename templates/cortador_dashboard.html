@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Estilos externos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles_cortador.css') }}">
+  
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <title>Dashboard Cortador</title>
+  
+  <script>
+    function mostrarSeccion(id) {
+      const secciones = document.querySelectorAll('.seccion');
+      secciones.forEach(seccion => seccion.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+    }
+
+    function confirmarCierreSesion() {
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Tu sesión se cerrará.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#aaa',
+        confirmButtonText: 'Sí, cerrar sesión',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "/";
+        }
+      });
+    }
+  </script>
+
+  <style>
+    .logout-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 22px;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      color: #ff1f36;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><i class="fas fa-scissors"></i> Dashboard Cortador</h1>
+      <button title="Cerrar sesión" class="logout-btn" onclick="confirmarCierreSesion()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+
+    <div class="menu">
+      <button onclick="mostrarSeccion('tinas')"><i class="fas fa-flask"></i> Tinas Grandes</button>
+      <button onclick="mostrarSeccion('rollos')"><i class="fas fa-scroll"></i> Rollos Gastados</button>
+      <button onclick="mostrarSeccion('verificacion')"><i class="fas fa-check-circle"></i> Verificación Corte</button>
+      <button onclick="mostrarSeccion('tarjetas')"><i class="fas fa-id-card"></i> Tarjetas Kaban</button>
+      <button onclick="mostrarSeccion('parada')"><i class="fas fa-ban"></i> Parada Máquina</button>
+    </div>
+
+    <div class="contenido">
+      <!-- Registro de Tinas Grandes -->
+      <div id="tinas" class="seccion" style="display:none">
+        <h2>Registro de Tinas Grandes</h2>
+        <form>
+          <label>ID Cortador:</label>
+          <input type="text" name="id_cortador" required />
+          <label>ID Registro:</label>
+          <input type="text" name="id_registro" readonly value="AUTO_GENERADO" />
+          <label>Referencia de la Tina:</label>
+          <input type="text" name="referencia_tina" required />
+          <label>Fecha:</label>
+          <input type="date" name="fecha" readonly value="AUTO" />
+          <label>Hora:</label>
+          <input type="time" name="hora" readonly value="AUTO" />
+          <button class="btn">Registrar</button>
+        </form>
+      </div>
+
+      <!-- Registro de Rollos Gastados -->
+      <div id="rollos" class="seccion" style="display:none">
+        <h2>Registro de Rollos Gastados</h2>
+        <form>
+          <label>ID Cortador:</label>
+          <input type="text" name="id_cortador" required />
+          <label>ID Registro:</label>
+          <input type="text" name="id_registro" readonly value="AUTO_GENERADO" />
+          <label>Referencia del Material:</label>
+          <input type="text" name="referencia_material" required />
+          <label>Hora Inicio:</label>
+          <input type="time" name="hora_inicio" required />
+          <label>Hora Fin:</label>
+          <input type="time" name="hora_fin" required />
+          <label>Fecha:</label>
+          <input type="date" name="fecha" readonly value="AUTO" />
+          <button class="btn">Registrar</button>
+        </form>
+      </div>
+
+      <!-- Verificación de Corte de Máquina -->
+      <div id="verificacion" class="seccion" style="display:none">
+        <h2>Verificación Corte de Máquina</h2>
+        <form>
+          <label>ID Cortador:</label>
+          <input type="text" name="id_cortador" required />
+          <label>ID Registro:</label>
+          <input type="text" name="id_registro" readonly value="AUTO_GENERADO" />
+          <label>ID Máquina:</label>
+          <input type="text" name="id_maquina" required />
+          <label>Referencia del Material:</label>
+          <input type="text" name="referencia_material" required />
+          <label>Corte Correcto:</label>
+          <select name="corte_correcto">
+            <option value="si">Sí</option>
+            <option value="no">No</option>
+          </select>
+          <label>Observaciones:</label>
+          <textarea name="observaciones"></textarea>
+          <label>Fecha:</label>
+          <input type="date" name="fecha" readonly value="AUTO" />
+          <label>Hora:</label>
+          <input type="time" name="hora" readonly value="AUTO" />
+          <button class="btn">Registrar</button>
+        </form>
+      </div>
+
+      <!-- Lectura de Tarjetas Kaban -->
+      <div id="tarjetas" class="seccion" style="display:none">
+        <h2>Lectura Tarjetas Kaban</h2>
+        <form>
+          <label>ID Cortador:</label>
+          <input type="text" name="id_cortador" required />
+          <label>ID Registro:</label>
+          <input type="text" name="id_registro" readonly value="AUTO_GENERADO" />
+          <label>Código de Tarjeta:</label>
+          <input type="text" name="codigo_tarjeta" required />
+          <label>Referencia de Tina:</label>
+          <input type="text" name="referencia_tina" required />
+          <label>Fecha:</label>
+          <input type="date" name="fecha" readonly value="AUTO" />
+          <label>Hora:</label>
+          <input type="time" name="hora" readonly value="AUTO" />
+          <button class="btn">Registrar</button>
+        </form>
+      </div>
+
+      <!-- Informe de Parada de Máquina -->
+      <div id="parada" class="seccion" style="display:none">
+        <h2>Informe Parada de Máquina</h2>
+        <form>
+          <label>ID Cortador:</label>
+          <input type="text" name="id_cortador" required />
+          <label>ID Registro:</label>
+          <input type="text" name="id_registro" readonly value="AUTO_GENERADO" />
+          <label>ID Máquina:</label>
+          <input type="text" name="id_maquina" required />
+          <label>Descripción del Daño:</label>
+          <textarea name="descripcion_dano" required></textarea>
+          <label>Tiempo de Parada:</label>
+          <input type="text" name="tiempo_parada" required />
+          <label>Fecha:</label>
+          <input type="date" name="fecha" readonly value="AUTO" />
+          <label>Hora:</label>
+          <input type="time" name="hora" readonly value="AUTO" />
+          <button class="btn">Registrar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

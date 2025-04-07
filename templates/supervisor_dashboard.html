@@ -1,0 +1,202 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles_supervisor.css') }}" />
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <title>Dashboard Supervisor</title>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+      background-color: #222;
+      border-radius: 12px;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      color: #fff;
+      margin: 0;
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 22px;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      color: #ff1f36;
+    }
+
+    h2, h3 {
+      color: #333;
+      margin-top: 10px;
+    }
+
+    button {
+      background-color: #ff1f36;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      margin: 5px;
+      border-radius: 12px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #cc192b;
+    }
+
+    #subcategorias button,
+    #infoCategoria button {
+      background-color: #555;
+    }
+
+    #subcategorias button:hover,
+    #infoCategoria button:hover {
+      background-color: #333;
+    }
+
+    #subcategorias, #infoCategoria {
+      margin-top: 20px;
+    }
+
+    .seccion {
+      display: none;
+    }
+  </style>
+
+  <script>
+    function mostrarSeccion(id) {
+      const secciones = document.querySelectorAll('.seccion');
+      secciones.forEach(seccion => seccion.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+    }
+
+    function confirmarCierreSesion() {
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Tu sesión se cerrará.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#aaa',
+        confirmButtonText: 'Sí, cerrar sesión',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "/";
+        }
+      });
+    }
+
+    function mostrarSubcategorias(tipo) {
+      const subcategoriasDiv = document.getElementById('subcategorias');
+      const infoDiv = document.getElementById('infoCategoria');
+      infoDiv.innerHTML = "";
+
+      let botones = "";
+
+      if (tipo === "motos") {
+        botones = `
+          <h3>Subcategorías - MOTOS</h3>
+          <button onclick="mostrarInfo('49LOO', 'motos')">49LOO</button>
+          <button onclick="mostrarInfo('JJ', 'motos')">JJ</button>
+          <button onclick="mostrarInfo('HERO', 'motos')">HERO</button>
+          <button onclick="mostrarInfo('BBL', 'motos')">BBL</button>
+          <button onclick="mostrarInfo('BUB', 'motos')">BUB</button>
+          <button onclick="mostrarInfo('BVT', 'motos')">BVT</button>
+        `;
+      } else if (tipo === "sofasa") {
+        botones = `
+          <h3>Subcategorías - SOFASA</h3>
+          <button onclick="mostrarInfo('MOTOR HJD', 'sofasa')">MOTOR HJD</button>
+          <button onclick="mostrarInfo('HJD MONOBLOCK HDJ', 'sofasa')">HJD MONOBLOCK HDJ</button>
+          <button onclick="mostrarInfo('PEQUEÑAS HJD', 'sofasa')">PEQUEÑAS HJD</button>
+          <button onclick="mostrarInfo('MOTOR X52', 'sofasa')">MOTOR X52</button>
+          <button onclick="mostrarInfo('PEQUEÑAS X52', 'sofasa')">PEQUEÑAS X52</button>
+          <button onclick="mostrarInfo('MONOBLOCK X52', 'sofasa')">MONOBLOCK X52</button>
+        `;
+      }
+
+      subcategoriasDiv.innerHTML = botones;
+    }
+
+    function mostrarInfo(categoria, tipo) {
+      const info = {
+        "49LOO": "Información sobre 49LOO...",
+        "JJ": "Información sobre JJ...",
+        "HERO": "Información sobre HERO...",
+        "BBL": "Información sobre BBL...",
+        "BUB": "Información sobre BUB...",
+        "BVT": "Información sobre BVT...",
+        "MOTOR HJD": "Información sobre MOTOR HJD...",
+        "HJD MONOBLOCK HDJ": "Información sobre HJD MONOBLOCK HDJ...",
+        "PEQUEÑAS HJD": "Información sobre PEQUEÑAS HJD...",
+        "MOTOR X52": "Información sobre MOTOR X52...",
+        "PEQUEÑAS X52": "Información sobre PEQUEÑAS X52...",
+        "MONOBLOCK X52": "Información sobre MONOBLOCK X52..."
+      };
+
+      const infoDiv = document.getElementById('infoCategoria');
+      const subcategoriasDiv = document.getElementById('subcategorias');
+
+      infoDiv.innerHTML = `
+        <h3>${categoria}</h3>
+        <p>${info[categoria]}</p>
+        <button onclick="mostrarSubcategorias('${tipo}')">Volver</button>
+      `;
+
+      subcategoriasDiv.innerHTML = "";
+    }
+  </script>
+</head>
+<body>
+  <div class="container animate__animated animate__fadeIn">
+    <div class="header">
+      <h1><i class="fas fa-user-tie"></i> Dashboard Supervisor</h1>
+      <button title="Cerrar sesión" class="logout-btn" onclick="confirmarCierreSesion()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+
+    <h2>Selecciona una línea</h2>
+    <button onclick="mostrarSubcategorias('motos')">MOTOS</button>
+    <button onclick="mostrarSubcategorias('sofasa')">SOFASA</button>
+
+    <div id="subcategorias"></div>
+    <div id="infoCategoria"></div>
+  </div>
+</body>
+</html>

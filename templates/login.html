@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='OIP.png') }}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet"href="{{ url_for('static', filename='styleslogin.css') }}">
+</head>
+<body>
+  <div class="login-container animate__animated animate__fadeIn">
+    <!-- Lado izquierdo: Formulario -->
+    <div class="login-left">
+      <div class="login-box">
+        <img src="{{ url_for('static', filename='yazaki.png') }}" alt="Logo de la empresa" width="400">
+        <form id="loginForm">
+          <label for="correo">EMAIL</label>
+          <input type="email" id="correo" name="correo" placeholder="email@ejemplo.com" required />
+
+          <label for="contraseña">PASSWORD</label>
+          <input type="password" id="contraseña" name="contraseña" placeholder="********" required />
+
+          <div class="forgot-password">
+            <a href="#">¿Olvidaste tu contraseña?</a>
+          </div>
+
+          <button type="submit">LOGIN</button>
+        </form>
+        <p id="mensaje-error">Correo o contraseña incorrectos.</p>
+      </div>
+    </div>
+
+    <!-- Lado derecho: Imagen -->
+    <div class="login-right">
+      <img src="{{ url_for('static', filename='tableros.png') }}" alt="Imagen empresa" height="500" />
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+  
+      const correo = document.getElementById("correo").value;
+      const contraseña = document.getElementById("contraseña").value;
+  
+      if (correo === "admin@gmail.com" && contraseña === "123456") {
+        window.location.href = "/dashboard/admin";
+      } else if (correo === "supervisor@gmail.com" && contraseña === "123456") {
+        window.location.href = "/dashboard/supervisor";
+      } else if (correo === "calidad@gmail.com" && contraseña === "123456") {
+        window.location.href = "/dashboard/calidad";
+      } else if (correo === "cortador@gmail.com" && contraseña === "123456") {
+        window.location.href = "/dashboard/cortador";
+      } else {
+        document.getElementById("mensaje-error").style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>

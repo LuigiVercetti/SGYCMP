@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles_calidad.css') }}">
+  
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <title>Dashboard Calidad</title>
+  <script>
+    function mostrarSeccion(id) {
+      const secciones = document.querySelectorAll('.seccion');
+      secciones.forEach(seccion => seccion.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+    }
+
+    function confirmarCierreSesion() {
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Tu sesión se cerrará.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#aaa',
+        confirmButtonText: 'Sí, cerrar sesión',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "/";
+        }
+      });
+    }
+  </script>
+
+  <style>
+    .logout-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 22px;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      color: #ff1f36;
+    }
+  </style>
+
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+          <h1><i class="fas fa-scissors"></i> Dashboard Cortador</h1>
+          <button title="Cerrar sesión" class="logout-btn" onclick="confirmarCierreSesion()">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+        </div>
+  <div class="container">
+
+
+    <div class="menu animate__animated animate__fadeInUp">
+      <button onclick="mostrarSeccion('tinas')"><i class="fas fa-vial"></i> Registro de Tinas</button>
+      <button onclick="mostrarSeccion('defectos')"><i class="fas fa-exclamation-triangle"></i> Registro de Defectos</button>
+      <button onclick="mostrarSeccion('tarjetas')"><i class="fas fa-id-card"></i> Registro de Tarjetas</button>
+      <button onclick="mostrarSeccion('paradas')"><i class="fas fa-stopwatch"></i> Registro de Paradas</button>
+      <button onclick="mostrarSeccion('verificacion')"><i class="fas fa-user-check"></i> Verificación del Cortador</button>
+    </div>
+
+    <div id="contenido" class="animate__animated animate__fadeIn"></div>
+  </div>
+
+  <script>
+    function cerrarSesion() {
+      if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
+        window.location.href = "login.html";
+      }
+    }
+
+    function mostrarSeccion(seccion) {
+      const contenido = document.getElementById("contenido");
+      let html = "";
+
+      if (seccion === "tinas") {
+        html = `
+          <h2>Registro de Tinas</h2>
+          <form>
+            <label>Código del Operario:</label>
+            <input type="text" required />
+
+            <label>Línea:</label>
+            <select id="lineaSelect" onchange="actualizarReferencias()">
+              <option value="">Seleccione</option>
+              <option value="motos">MOTOS</option>
+              <option value="sofasa">SOFASA</option>
+            </select>
+
+            <label>Familia:</label>
+            <select id="referenciaSelect"></select>
+
+            <label>Referencia Tina:</label>
+            <input type="text" required />
+
+
+            <label>¿Pasó la revisión?</label>
+            <select id="revisionSelect" onchange="mostrarDefectos()">
+              <option value="">Seleccione</option>
+              <option value="si">Sí</option>
+              <option value="no">No</option>
+            </select>
+
+            <label>Fecha:</label>
+            <input type="text" value="${new Date().toLocaleDateString()}" readonly />
+
+            <div id="defectosExtra"></div>
+
+            <button type="submit">Registrar</button>
+          </form>
+        `;
+      } else if (seccion === "defectos") {
+        html = `
+          <h2>Registro de Defectos</h2>
+          <form>
+            <label>Tipo de Defecto:</label>
+            <input type="text" />
+
+            <label>Observaciones:</label>
+            <textarea></textarea>
+
+            <button type="submit">Registrar</button>
+          </form>
+        `;
+      } else if (seccion === "tarjetas") {
+        html = `
+          <h2>Registro de Tarjetas</h2>
+          <form>
+            <label>Número de Tarjeta:</label>
+            <input type="text" value="TAR-${Date.now()}" readonly />
+
+            <label>Línea:</label>
+            <select id="tarjetaLinea" onchange="actualizarTarjetaReferencias()">
+              <option value="">Seleccione</option>
+              <option value="motos">MOTOS</option>
+              <option value="sofasa">SOFASA</option>
+            </select>
+
+            <label>Referencia:</label>
+            <select id="tarjetaReferencia"></select>
+
+            <label>Diámetro:</label>
+            <input type="text" />
+
+            <label>Longitud:</label>
+            <input type="text" />
+
+            <label>Código de Defecto:</label>
+            <input type="text" />
+
+            <label>Código del Trabajador:</label>
+            <input type="text" />
+
+            <button type="submit">Registrar</button>
+          </form>
+        `;
+      } else if (seccion === "paradas") {
+        html = `
+          <h2>Registro de Paradas</h2>
+          <form>
+            <label>Razón:</label>
+            <select>
+              <option value="material_defectuoso">Material defectuoso</option>
+              <option value="sin_material">Sin material</option>
+            </select>
+
+            <label>Duración (min):</label>
+            <input type="number" />
+
+            <label>Hora de Inicio:</label>
+            <input type="time" />
+
+            <button type="submit">Registrar</button>
+          </form>
+        `;
+      } else if (seccion === "verificacion") {
+        html = `
+          <h2>Verificación del Cortador</h2>
+          <form>
+            <label>ID del Cortador:</label>
+            <input type="text" id="verificacionID" />
+
+            <label>Fecha de Verificación:</label>
+            <input type="date" onchange="cargarVerificaciones()" />
+
+            <div id="verificacionResultados" style="margin: 10px 0;"></div>
+
+            <label>Observaciones Finales:</label>
+            <textarea></textarea>
+
+            <button type="submit">Registrar</button>
+          </form>
+        `;
+      }
+
+      contenido.innerHTML = html;
+    }
+
+    function actualizarReferencias() {
+      const linea = document.getElementById("lineaSelect").value;
+      const refSelect = document.getElementById("referenciaSelect");
+      refSelect.innerHTML = "";
+      const opciones = linea === "motos"
+        ? ["49LOO", "JJ", "HERO", "BBL", "BUB", "BVT"]
+        : ["MOTOR HJD", "HJD MONOBLOCK HDJ", "PEQUEÑAS HJD", "MOTOR X52", "PEQUEÑAS X52", "MONOBLOCK X52"];
+      opciones.forEach(ref => refSelect.innerHTML += `<option value="${ref}">${ref}</option>`);
+    }
+
+    function actualizarTarjetaReferencias() {
+      const linea = document.getElementById("tarjetaLinea").value;
+      const refSelect = document.getElementById("tarjetaReferencia");
+      refSelect.innerHTML = "";
+      const opciones = linea === "motos"
+        ? ["49LOO", "JJ", "HERO", "BBL", "BUB", "BVT"]
+        : ["MOTOR HJD", "HJD MONOBLOCK HDJ", "PEQUEÑAS HJD", "MOTOR X52", "PEQUEÑAS X52", "MONOBLOCK X52"];
+      opciones.forEach(ref => refSelect.innerHTML += `<option value="${ref}">${ref}</option>`);
+    }
+
+    function mostrarDefectos() {
+      const revision = document.getElementById('revisionSelect').value;
+      const defectosDiv = document.getElementById('defectosExtra');
+      if (revision === "no") {
+        defectosDiv.innerHTML = `
+          <label>Tipo de Defecto:</label>
+          <input type="text" required />
+          <label>Observaciones:</label>
+          <textarea required></textarea>
+        `;
+      } else {
+        defectosDiv.innerHTML = "";
+      }
+    }
+
+    function cargarVerificaciones() {
+      const id = document.getElementById('verificacionID').value;
+      const fecha = document.querySelector('input[type="date"]').value;
+      const resultados = document.getElementById('verificacionResultados');
+      resultados.innerHTML = `Registros de verificación del cortador <strong>${id}</strong> para el <strong>${fecha}</strong>`;
+    }
+  </script>
+</body>
+</html>
